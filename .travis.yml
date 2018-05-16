@@ -1,0 +1,34 @@
+language: generic
+compiler:
+  - clang
+  - gcc
+dist: trusty
+sudo: required
+before_install:
+- sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' 
+- sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key 0xB01FA116
+#- sudo sh -c 'wget "http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_9.1.85-1_amd64.deb" && dpkg -i cuda-repo-ubuntu1604_9.1.85-1_amd64.deb'
+#- sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/7fa2af80.pub
+- sudo apt-get update -qq
+- sudo apt-get install -qq ros-kinetic-desktop-full ros-kinetic-catkin python-catkin-pkg
+- sudo apt-get install -qq doxygen openssh-server libusb-dev texinfo
+#install:
+#- git clone git@bitbucket.org:gtborg/gtsam.git
+#- mkdir gtsam/build && cd gtsam/build
+#- cmake -DGTSAM_INSTALL_GEOGRAPHICLIB=ON -DGTSAM_WITH_EIGEN_MKL=OFF ..
+#- sudo make install 
+#- cd ../../
+#- sudo ldconfig
+#before_script:
+- source /opt/ros/kinetic/setup.bash
+- mkdir -p ~/catkin_ws/src
+- catkin_init_workspace ~/catkin_ws/src
+- ln -s "$(pwd)" ~/catkin_ws/src
+- cd ~/catkin_ws
+install:
+- rosdep install --from-path src --ignore-src -y
+script:
+- catkin_make
+after_success:
+- source src/autorally/autorally_util/setupEnvLocal.sh
+- source catkin_ws/devel/setup.sh
